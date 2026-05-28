@@ -1,64 +1,62 @@
-# open-slide workspace
+# Voyage en Chine — Été 2026 🇨🇳
 
-Slides as React components. Each slide lives under `slides/<id>/index.tsx` and default-exports an array of page components. The `@open-slide/core` runtime handles layout, scaling, navigation, thumbnails, and fullscreen play mode — you just write the pages.
+Présentation immersive de notre itinéraire de 17 jours / 16 nuits à travers la Chine,
+construite avec [**Open Slide**](https://open-slide.dev) (slides = composants React, canvas fixe 1920×1080).
 
-## Getting started
+> Pékin → Chengdu → Chongqing → Zhangjiajie → Wangxian Valley → Wuyuan → Shanghai
+
+Le deck complet vit dans **[`slides/chine-trip/index.tsx`](./slides/chine-trip/index.tsx)** : 21 pages
+(titre, vue d’ensemble, carte du trajet, 16 nuits, récap transport, final), avec barre de
+progression du voyage, transitions sobres et notes orateur (`export const notes`).
+
+## Lancer la présentation
 
 ```bash
-pnpm install
-pnpm dev
+npm install      # dépendances (déjà installées si le projet a été scaffoldé)
+npm run dev      # serveur de dev avec hot-reload → http://localhost:5173
 ```
 
-Then open the dev server and edit `slides/getting-started/index.tsx`, or create a new slide at `slides/<your-slide>/index.tsx`.
+Ouvre ensuite **http://localhost:5173/s/chine-trip**.
+- Flèches / Page↑ / Page↓ : naviguer entre les pages
+- `F` : mode plein écran (présentation) — Espace / → suivant, ← précédent, `Échap` pour sortir
+- Bouton **Notes** dans l’en-tête : afficher les notes orateur
 
-## Scripts
+## Build & export
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start the dev server with hot reload. |
-| `pnpm build` | Build a static bundle you can deploy. |
-| `pnpm preview` | Preview the built bundle locally. |
-
-## Authoring a slide
-
-```tsx
-// slides/my-slide/index.tsx
-import type { Page, SlideMeta } from '@open-slide/core';
-
-const Cover: Page = () => (
-  <div style={{ width: '100%', height: '100%' }}>Hello</div>
-);
-
-export const meta: SlideMeta = { title: 'My slide' };
-export default [Cover] satisfies Page[];
+```bash
+npm run build    # bundle statique (HTML/JS/CSS) dans dist/
+npm run preview  # servir le bundle buildé en local pour vérifier
 ```
 
-Every page renders into a fixed **1920 × 1080** canvas — design with absolute pixel values. Put images, videos, and fonts under `slides/<id>/assets/` and import them directly.
+### Export PDF
 
-See [`CLAUDE.md`](./CLAUDE.md) for the full authoring guide.
+Open Slide n’a pas d’export PDF natif — on passe par l’impression du navigateur (rendu pixel-perfect) :
 
-## Navigation
+1. `npm run preview` (ou `npm run dev`)
+2. Ouvre `http://localhost:5173/s/chine-trip`, appuie sur `F` (plein écran), navigue page par page
+3. Pour un PDF complet : ouvre la page dans **Chrome → Imprimer → Enregistrer en PDF**,
+   format **paysage**, taille **personnalisée 1920×1080 px** (ou A4 paysage), marges **aucune**,
+   « Graphiques d’arrière-plan » activé.
 
-- Arrow keys / PageUp / PageDown move between pages.
-- `F` enters fullscreen play mode; Esc exits.
-- In play mode: Space / → next, ← prev.
+Le bundle `dist/` est aussi déployable tel quel (Netlify / Vercel — configs incluses).
 
-## Claude Code integration
+## Structure
 
-This workspace ships with Claude Code skills preconfigured under `.claude/skills/` and `.agents/skills/`. Ask Claude Code to "make slides about X" and the `create-slide` skill takes over. Use `apply-comments` to iterate via inspector-style markers inside your source.
-
-## Config
-
-Optional `open-slide.config.ts` at the workspace root:
-
-```ts
-import type { OpenSlideConfig } from '@open-slide/core';
-
-const openSlideConfig: OpenSlideConfig = {
-  port: 5173,
-};
-
-export default openSlideConfig;
+```
+slides/chine-trip/
+  index.tsx          # le deck (21 pages, design, transitions, notes)
+  assets/            # 45 photos (Wikimedia Commons, licences libres)
+image-sources.md     # toutes les images : fichier · sujet · auteur · licence · source
 ```
 
-Supported fields: `slidesDir`, `port`.
+## Images
+
+Toutes les photos viennent de **Wikimedia Commons** (CC0 / CC BY / CC BY-SA / domaine public).
+La liste complète, avec crédits et liens sources, est dans **[`image-sources.md`](./image-sources.md)**.
+La carte du trajet (page 3) est dessinée en **SVG** (pas d’image externe).
+
+Chaque image correspond à **un lieu d’intérêt précis** (titre Commons vérifié). Deux lieux sans
+photo libre fidèle (72 Qilou, teamLab Shanghai) utilisent un placeholder propre, remplaçable via
+le panneau **Assets** d’Open Slide. Pour rafraîchir les images, les scripts sont dans le dossier
+parent : `fetch_pois.py` (recherche + vérification par titre, écrit `pois.json`) puis
+`download_images.py` (télécharge dans `assets/`).
