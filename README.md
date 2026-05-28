@@ -9,6 +9,8 @@ Le deck complet vit dans **[`slides/chine-trip/index.tsx`](./slides/chine-trip/i
 (titre, vue d’ensemble, carte du trajet, 16 nuits, récap transport, final), avec barre de
 progression du voyage, transitions sobres et notes orateur (`export const notes`).
 
+Lien vers le Planning : https://docs.google.com/document/d/19VgN0fCdoKVinGdNlJM34PUi14TATfL7aKBzI7tEvLc/edit?usp=sharing
+
 ## Lancer la présentation
 
 ```bash
